@@ -120,11 +120,8 @@
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.8);
             margin: 0 auto 20px;
             overflow: hidden;
-            background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
-            padding: 3px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
@@ -133,8 +130,6 @@
             height: 100%;
             border-radius: 50%;
             object-fit: cover;
-            background: white;
-            border: 3px solid white;
             display: block;
         }
 
@@ -154,37 +149,45 @@
             justify-content: center;
             font-size: 48px;
             color: white;
-            border: 3px solid white;
         }
 
         /* Minimized Profile Picture */
         .profile-pic-minimized {
-            position: absolute;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 255, 255, 0.8);
-            overflow: hidden;
-            background: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
-            padding: 3px;
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 8px 20px 8px 8px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             cursor: pointer;
             z-index: 10;
-            transition: transform 0.3s ease;
-            display: none;
+            transition: all 0.3s ease;
         }
 
         .profile-pic-minimized:hover {
-            transform: scale(1.1);
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
         }
 
-        .profile-pic-minimized img {
+        .profile-pic-minimized-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .profile-pic-minimized-img img {
             width: 100%;
             height: 100%;
-            border-radius: 50%;
             object-fit: cover;
-            background: white;
-            border: 3px solid white;
         }
 
         .profile-pic-minimized .profile-pic-placeholder {
@@ -195,9 +198,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 24px;
             color: white;
-            border: 3px solid white;
+        }
+
+        .profile-pic-minimized-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
         /* Close Button */
@@ -230,42 +240,18 @@
             fill: white;
         }
 
-        /* Resize Handle */
-        .resize-handle {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            width: 20px;
-            height: 20px;
-            cursor: nwse-resize;
-            z-index: 100;
-        }
-
-        .resize-handle::before,
-        .resize-handle::after {
-            content: '';
-            position: absolute;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 1px;
-        }
-
-        .resize-handle::before {
-            width: 12px;
-            height: 2px;
-            bottom: 4px;
-            right: 0;
-        }
-
-        .resize-handle::after {
-            width: 2px;
-            height: 12px;
-            bottom: 0;
-            right: 4px;
-        }
-
         /* Profile card hidden state */
         .profile-card.hidden {
-            display: none;
+            opacity: 0;
+            transform: translate(var(--card-x, 0), var(--card-y, 0)) scale(0.8);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        /* Profile card visible animation */
+        .profile-card:not(.hidden) {
+            opacity: 1;
+            transition: opacity 0.4s ease, transform 0.01s;
         }
 
         /* Name */
@@ -407,14 +393,13 @@
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
         </div>
-        <div class="resize-handle"></div>
         <div class="profile-pic">
             <img src="your-photo.jpg" alt="Profile Picture" onerror="this.style.display='none'">
             <div class="profile-pic-placeholder">S</div>
         </div>
-        <div class="profile-name">Saad</div>
+        <div class="profile-name">Saad Ahemad</div>
         <div class="profile-bio">
-            Saad here, learning computer science and engineering and passionate to learn things out of the box
+            "The happiness of your life depends upon the quality of your thoughts." <br>— Marcus Aurelius
         </div>
         
         <!-- Social Icons -->
@@ -444,6 +429,12 @@
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                 </svg>
             </a>
+            <a href="https://yoursite.com" target="_blank" class="social-icon" title="Website">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.5 3C6.5 3 4 5.5 4 8.5c0 2.8 2.5 6.5 5.5 11 3-4.5 5.5-8.2 5.5-11C15 5.5 12.5 3 9.5 3zm0 7.5c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM18.5 9c-1.8 0-3.5-1.5-3.5-3.5S16.7 2 18.5 2 22 3.5 22 5.5 20.3 9 18.5 9zm0-5c-.8 0-1.5.7-1.5 1.5S17.7 7 18.5 7 20 6.3 20 5.5 19.3 4 18.5 4z"/>
+                    <text x="7" y="18" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="currentColor">S</text>
+                </svg>
+            </a>
         </div>
     </div>
 
@@ -459,8 +450,11 @@
 
     <!-- Minimized Profile Picture -->
     <div class="profile-pic-minimized" onclick="maximizeCard()">
-        <img src="your-photo.jpg" alt="Profile Picture" onerror="this.style.display='none'">
-        <div class="profile-pic-placeholder">S</div>
+        <div class="profile-pic-minimized-img">
+            <img src="your-photo.jpg" alt="Profile Picture" onerror="this.style.display='none'">
+            <div class="profile-pic-placeholder">S</div>
+        </div>
+        <div class="profile-pic-minimized-name">Saad Ahemad</div>
     </div>
 
     <script>
@@ -470,7 +464,6 @@
         const profileCard = document.querySelector('.profile-card');
         const profilePicMinimized = document.querySelector('.profile-pic-minimized');
         const startScreen = document.getElementById('start-screen');
-        const resizeHandle = document.querySelector('.resize-handle');
 
         // Start screen click handler
         startScreen.addEventListener('click', function() {
@@ -504,37 +497,63 @@
 
         // Minimize/Maximize functions
         function minimizeCard() {
+            // Store the current card position for reopening
+            const currentTransform = profileCard.style.transform;
+            profileCard.dataset.lastTransform = currentTransform;
+            
+            // Hide card with animation
             profileCard.classList.add('hidden');
-            profilePicMinimized.style.display = 'block';
-            // Position minimized pic at the card's last position
-            const cardRect = profileCard.getBoundingClientRect();
-            profilePicMinimized.style.left = cardRect.left + 'px';
-            profilePicMinimized.style.top = cardRect.top + 'px';
+            
+            // Show minimized version at center bottom
+            setTimeout(() => {
+                profilePicMinimized.style.display = 'flex';
+            }, 100);
         }
 
         function maximizeCard() {
-            profileCard.classList.remove('hidden');
+            // Hide minimized version
             profilePicMinimized.style.display = 'none';
+            
+            // Restore the last position if it exists
+            if (profileCard.dataset.lastTransform) {
+                profileCard.style.transform = profileCard.dataset.lastTransform;
+            }
+            
+            // Show card
+            profileCard.classList.remove('hidden');
         }
+
+        // Update card size state based on width
+        function updateCardSize() {
+            const width = profileCard.offsetWidth;
+            
+            if (width < 250) {
+                profileCard.setAttribute('data-size', 'tiny');
+            } else if (width < 350) {
+                profileCard.setAttribute('data-size', 'small');
+            } else {
+                profileCard.removeAttribute('data-size');
+            }
+        }
+
+        // Observe resize changes
+        const resizeObserver = new ResizeObserver(() => {
+            updateCardSize();
+        });
+        
+        resizeObserver.observe(profileCard);
 
         // Set initial volume
         bgVideo.volume = 0.5;
 
         // Draggable profile card
         let isDragging = false;
-        let isResizing = false;
         let currentX;
         let currentY;
         let initialX;
         let initialY;
         let xOffset = 0;
         let yOffset = 0;
-
-        // Resize variables
-        let initialWidth;
-        let initialHeight;
-        let initialMouseX;
-        let initialMouseY;
 
         // Center the card initially
         function centerCard() {
@@ -552,8 +571,8 @@
         document.addEventListener('mouseup', dragEnd);
 
         function dragStart(e) {
-            // Don't drag if clicking on social icons, close button, or resize handle
-            if (e.target.closest('.social-icon') || e.target.closest('.close-btn') || e.target.closest('.resize-handle')) return;
+            // Don't drag if clicking on social icons or close button
+            if (e.target.closest('.social-icon') || e.target.closest('.close-btn')) return;
             
             initialX = e.clientX - xOffset;
             initialY = e.clientY - yOffset;
@@ -569,14 +588,6 @@
                 xOffset = currentX;
                 yOffset = currentY;
                 profileCard.style.transform = `translate(${currentX}px, ${currentY}px)`;
-            } else if (isResizing) {
-                e.preventDefault();
-                const deltaX = e.clientX - initialMouseX;
-                const deltaY = e.clientY - initialMouseY;
-                const newWidth = Math.max(300, initialWidth + deltaX);
-                const newHeight = Math.max(200, initialHeight + deltaY);
-                profileCard.style.width = newWidth + 'px';
-                profileCard.style.height = newHeight + 'px';
             }
         }
 
@@ -584,57 +595,8 @@
             initialX = currentX;
             initialY = currentY;
             isDragging = false;
-            isResizing = false;
             profileCard.style.cursor = 'move';
         }
-
-        // Resize functionality
-        resizeHandle.addEventListener('mousedown', function(e) {
-            e.stopPropagation();
-            isResizing = true;
-            initialWidth = profileCard.offsetWidth;
-            initialHeight = profileCard.offsetHeight;
-            initialMouseX = e.clientX;
-            initialMouseY = e.clientY;
-        });
-
-        // Draggable minimized profile pic
-        let miniIsDragging = false;
-        let miniCurrentX;
-        let miniCurrentY;
-        let miniInitialX;
-        let miniInitialY;
-
-        profilePicMinimized.addEventListener('mousedown', function(e) {
-            if (e.detail === 1) { // Single click
-                setTimeout(() => {
-                    if (!miniIsDragging) {
-                        maximizeCard();
-                    }
-                }, 200);
-            }
-            
-            miniInitialX = e.clientX - profilePicMinimized.offsetLeft;
-            miniInitialY = e.clientY - profilePicMinimized.offsetTop;
-            miniIsDragging = false;
-        });
-
-        document.addEventListener('mousemove', function(e) {
-            if (miniIsDragging) {
-                e.preventDefault();
-                miniCurrentX = e.clientX - miniInitialX;
-                miniCurrentY = e.clientY - miniInitialY;
-                profilePicMinimized.style.left = miniCurrentX + 'px';
-                profilePicMinimized.style.top = miniCurrentY + 'px';
-            }
-        });
-
-        profilePicMinimized.addEventListener('mousemove', function(e) {
-            if (Math.abs(e.clientX - (miniInitialX + profilePicMinimized.offsetLeft)) > 5 || 
-                Math.abs(e.clientY - (miniInitialY + profilePicMinimized.offsetTop)) > 5) {
-                miniIsDragging = true;
-            }
-        });
 
         // Volume control
         volumeSlider.addEventListener('input', function() {
